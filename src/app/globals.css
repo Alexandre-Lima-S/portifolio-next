@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
+/* Declaração da fonte GlacialIndifference */
+@font-face {
+  font-family: 'GlacialIndifference';
+  src: url('/fonts/GlacialIndifference-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GlacialIndifference';
+  src: url('/fonts/GlacialIndifference-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-geist-sans: 'GlacialIndifference', sans-serif;
+  --typewriter-color: #ff073a; /* Preserved neon red color */
 }
 
 @theme inline {
@@ -19,8 +35,69 @@
   }
 }
 
+/* Reset global e controle de overflow horizontal */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Define o box-sizing global para evitar problemas de largura */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Estilos do body */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Garante que imagens não extrapolem o container */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Regras para a animação da logo */
+.logo-container {
+  transition: opacity 1s ease;
+  opacity: 1;
+}
+.logo-container.fade-out {
+  opacity: 0;
+}
+
+/* Regras para a animação do HeroSection (fade-in) */
+.hero-container {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.hero-container.fade-in {
+  opacity: 1;
+}
+
+/* Preserved Typewriter Styles */
+.blinking-cursor {
+  animation: blink 1s step-start infinite;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.neon-text {
+  color: var(--typewriter-color);
+  text-shadow: 0 0 1px var(--typewriter-color), 0 0 2px var(--typewriter-color);
 }

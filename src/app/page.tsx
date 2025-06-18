@@ -1,103 +1,131 @@
+"use client";
+
+import React, { useState, useEffect, createRef } from "react";
+import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Header from "../components/Header";
+import TransitionScreen from "../components/TransitionScreen";
+import HeroSection from "../sections/HeroSection";
+import VideoSection from "../sections/VideoSection";
+import TechStackShowcase from "../sections/TechStackShowcase";
+import LearnMoreSection from "../sections/LearnMoreSection";
+import BlankSection from "../sections/BlankSection";
+import ThirdSection from "../sections/ThirdSection";
+import Modal from "../components/Modal";
+import Footer from "../components/Footer";
+import { useGLTF } from "@react-three/drei";
+
+// pré-carregamento do modelo
+useGLTF.preload("/eye/model.gltf");
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const sections = {
+    Hero: createRef<HTMLDivElement>(),
+    Video: createRef<HTMLDivElement>(),
+    Testimonials: createRef<HTMLDivElement>(),
+    blanksections: createRef<HTMLDivElement>(),
+    thirdsections: createRef<HTMLDivElement>(),
+  } as const;
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const [showTransition, setShowTransition] = useState(true);
+  const [transitionFadeOut, setTransitionFadeOut] = useState(false);
+  const [showPage, setShowPage] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) =>
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  useEffect(() => setShowTransition(true), []);
+
+  useEffect(() => {
+    if (!showTransition) return;
+    const t1 = setTimeout(() => {
+      setTransitionFadeOut(true);
+      const t2 = setTimeout(() => {
+        setShowTransition(false);
+        setShowPage(true);
+      }, 1000);
+      return () => clearTimeout(t2);
+    }, 2000);
+    return () => clearTimeout(t1);
+  }, [showTransition]);
+
+  return (
+    <div className="min-h-screen overflow-x-hidden">
+      {showPage && (
+        <Header scrollToSection={scrollToSection} sections={sections} />
+      )}
+
+      {showTransition && <TransitionScreen fadeOut={transitionFadeOut} />}
+
+      {showPage && (
+        <>
+          {/* HERO */}
+          <div ref={sections.Hero} className="w-screen overflow-hidden">
+            <HeroSection
+              onLearnMore={() => scrollToSection(sections.Video)}
+              onOurLocation={() => scrollToSection(sections.blanksections)}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          </div>
+
+          {/* VIDEO */}
+          <div ref={sections.Video} className="w-screen overflow-hidden">
+            <VideoSection />
+          </div>
+
+          {/* SKILLS GALLERY */}
+          <div ref={sections.Testimonials} className="w-screen overflow-hidden">
+            <TechStackShowcase />
+          </div>
+
+          {/* Saber Mais */}
+          <LearnMoreSection onClick={() => setIsModalOpen(true)} />
+
+          {/* PROJETOS */}
+          <div ref={sections.blanksections} className="w-screen overflow-hidden">
+            <BlankSection />
+          </div>
+
+          {/* CONTATE-ME */}
+          <div ref={sections.thirdsections} className="w-screen overflow-hidden">
+            <ThirdSection scrollToHero={() => scrollToSection(sections.Hero)} />
+          </div>
+        </>
+      )}
+
+      {/* modal de tópicos */}
+      <AnimatePresence>
+        {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
+      </AnimatePresence>
+
+      {/* rodapé */}
+      <Footer />
+
+      {/* animações globais */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 1.5s ease-out forwards;
+        }
+        .animate-fadeOut {
+          animation: fadeOut 1s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
