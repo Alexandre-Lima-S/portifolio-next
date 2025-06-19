@@ -2,15 +2,15 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
-import { FiInstagram } from 'react-icons/fi';
+import { FiInstagram } from "react-icons/fi";
 
 // Tipo para as seções
 export type Sections = {
-  [key: string]: React.RefObject<HTMLDivElement | null>;
+  [key: string]: React.RefObject<HTMLDivElement>;
 };
 
 type HeaderProps = {
-  scrollToSection: (sectionRef: React.RefObject<HTMLDivElement | null>) => void;
+  scrollToSection: (sectionRef: React.RefObject<HTMLDivElement>) => void;
   sections: Sections;
 };
 
@@ -27,25 +27,19 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
   }, []);
 
   const handleLogoClick = useCallback(() => {
-    // Comportamento alternativo se necessário
+    // Se quiser adicionar navegação pro topo
   }, []);
 
   const handleMenuItemClick = useCallback(
     (item: string) => {
-      console.log("Item clicado:", item);
-      // Mapeia os itens do menu para as seções correspondentes
       const sectionMap: { [key: string]: string } = {
         Projetos: "blanksections",
         "Contate-me": "thirdsections",
       };
       const sectionKey = sectionMap[item];
-      console.log("Section key mapeada:", sectionKey);
       const sectionRef = sections[sectionKey];
-      console.log("Section ref:", sectionRef, "Current:", sectionRef?.current);
       if (sectionRef && sectionRef.current) {
         scrollToSection(sectionRef);
-      } else {
-        console.error("Seção não encontrada para:", sectionKey);
       }
     },
     [sections, scrollToSection]
@@ -65,7 +59,7 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
           isScrolled ? "bg-black/10 backdrop-blur-md shadow-lg" : "bg-transparent"
         }`}
       >
-        {/* Logo com animação, sempre visível */}
+        {/* Logo */}
         <motion.div
           className="relative h-10 w-24 cursor-pointer flex items-center justify-center text-black sm:h-12 sm:w-32"
           onHoverStart={() => setIsHovered(true)}
@@ -73,10 +67,7 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
           onClick={handleLogoClick}
           role="button"
           tabIndex={0}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") handleLogoClick();
-          }}
-          aria-label="Logo GPX"
+          onKeyPress={(e) => e.key === "Enter" && handleLogoClick()}
         >
           <motion.span
             className="absolute left-1/2 transform -translate-x-1/2 text-2xl sm:text-3xl font-normal"
@@ -84,7 +75,7 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
             animate={isHovered ? { y: -40, opacity: 0 } : { y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            AL 
+            AL
           </motion.span>
           <motion.span
             className="absolute left-1/2 transform -translate-x-1/2 text-2xl sm:text-3xl font-normal"
@@ -92,11 +83,11 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
             animate={isHovered ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Codes 
+            Codes
           </motion.span>
         </motion.div>
 
-        {/* Menu centralizado posicionado absolutamente em desktop */}
+        {/* Menu */}
         <motion.div
           className={`hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center ${
             isScrolled
@@ -114,10 +105,7 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
                 onClick={() => handleMenuItemClick(item)}
                 role="button"
                 tabIndex={0}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") handleMenuItemClick(item);
-                }}
-                aria-label={`Ir para a seção ${item}`}
+                onKeyPress={(e) => e.key === "Enter" && handleMenuItemClick(item)}
               >
                 <span className="relative">
                   {item}
@@ -128,7 +116,7 @@ export default function Header({ scrollToSection, sections }: HeaderProps) {
           </nav>
         </motion.div>
 
-        {/* Ícone do Instagram apenas em desktop */}
+        {/* Instagram */}
         <a
           href="https://instagram.com/the.gpx"
           target="_blank"
